@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoodSpace</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Background */
+body {
+    height: 100vh;
+    background: linear-gradient(135deg, #dcd6f7, #fcefee, #d6f0f7);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 40px;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #4b4b9f;
+}
+
+.nav-buttons button {
+    margin-left: 10px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 20px;
+    background: #eee;
+    cursor: pointer;
+}
+
+/* Main Section */
+.container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex: 1;
+}
+
+/* Cards */
+.card {
+    width: 260px;
+    height: 180px;
+    padding: 20px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    margin: 20px;
+}
+
+.card h3 {
+    margin-top: 10px;
+    color: #3b3b7a;
+}
+
+.card p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Center Content */
+.center {
+    text-align: center;
+}
+
+.center h1 {
+    font-size: 40px;
+    color: #2e2e6e;
+}
+
+.center span {
+    color: #7c5cff;
+}
+
+.center p {
+    margin: 15px 0;
+    color: #555;
+}
+
+/* Button */
+.btn {
+    padding: 15px 35px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #7c5cff, #5bbcff);
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Bottom Features */
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 30px;
+}
+
+/* Feature Buttons */
+.feature-box {
+    width: 120px;
+    height: 120px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.feature-box:hover {
+    transform: scale(1.1);
+}
+
+.feature-box span {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.feature-box.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+/* Layout sides */
+.left, .right {
+    display: flex;
+    flex-direction: column;
+}
+</style>
+
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="logo">MoodSpace</div>
+    <div class="nav-buttons">
+        <button onclick="window.location.href='chatbot.html'">Chat 💬</button>
+        <button>Habits 📅</button>
+        <button onclick="window.location.href='reflectra.html'">Explore 🌿</button>
+    </div>
+</div>
+
+<!-- Main Section -->
+<div class="container">
+
+    <!-- Left Cards -->
+    <div class="left">
+        <div class="card" onclick="window.location.href='moodtracker.html'">
+            🌊
+            <h3>Track Moods</h3>
+            <p>Log daily emotions and discover patterns.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='cosmic-ripple%20(1).html'">
+            🌸
+            <h3>Feel Better</h3>
+            <p>Gentle routines to bring calm and joy.</p>
+        </div>
+    </div>
+
+    <!-- Center -->
+    <div class="center">
+        <h1>A place to <br><span>meet yourself</span></h1>
+        <p>Your emotional wellness companion.</p>
+        <button class="btn" onclick="window.location.href='moodcircle.html'">Get Started ✨</button>
+        <div class="card" onclick="window.location.href='m.html'" style="margin-top: 150px;">
+            👁️
+            <h3>Face Detection</h3>
+            <p>Analyze your expressions and emotions.</p>
+        </div>
+    </div>
+
+    <!-- Right Cards -->
+    <div class="right">
+        <div class="card" onclick="window.location.href='newlife.html'">
+            🔮
+            <h3>Get Insights</h3>
+            <p>Smart reflections and advice.</p>
+        </div>
+
+        <div class="card" onclick="window.location.href='newgame.html'">
+            🎮
+            <h3>Play & Unwind</h3>
+            <p>Fun games to lift your mood.</p>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

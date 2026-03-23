@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reflectra - Life Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        'pastel-lavender': '#e8eaf6',
+                        'pastel-blue': '#e3f2fd',
+                        'pastel-mint': '#e8f5e8',
+                        'pastel-peach': '#fff3e0',
+                        'pastel-rose': '#fce4ec',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 50%, #e8eaf6 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            color: #374151;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-soft);
+            border-radius: 20px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        /* FORMAL BUTTONS */
+        .btn-primary {
+            background: linear-gradient(135deg, #b371b6 0%, #764ba2 100%);
+            color: white;
+            font-weight: 500;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            text-transform: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.7);
+            color: #4a5568;
+            font-weight: 500;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 12px 24px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-secondary:hover {
+            background: rgb(211, 160, 214);
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-1px);
+        }
+
+        /* FORMAL TYPOGRAPHY */
+        .h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            color: #1a202c;
+        }
+
+        .h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            letter-spacing: -0.01em;
+        }
+
+        .h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .text-lead {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        /* Progress bars */
+        .progress-bg {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* Energy circle */
+        .energy-circle {
+            background: conic-gradient(
+                #48bb78 0deg 180deg,
+                #ed8936 180deg 270deg,
+                #f56565 270deg 360deg
+            );
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .energy-fill {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Subtle animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @media (max-width: 768px) {
+            .grid-cols-1 { grid-template-columns: 1fr; }
+            .grid-cols-2 { grid-template-columns: 1fr; }
+            .h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body class="p-6 md:p-8">
+    <!-- Header -->
+    <header class="mb-12 max-w-7xl mx-auto">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="h1 mb-2 leading-tight">Reflectra</h1>
+                <p class="text-lead text-gray-600 max-w-md">
+                    Professional life dashboard for wellness tracking and personal insights
+                </p>
+            </div>
+            <div class="w-14 h-14 glass-card flex items-center justify-center rounded-2xl">
+                <i class="fas fa-heart text-pink-400 text-lg"></i>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+        <!-- Mood Overview -->
+        <section class="lg:col-span-2 glass-card p-8 lg:p-10 fade-in-up">
+            <div class="flex items-start justify-between mb-8">
+                <div>
+                    <h2 class="h2 mb-2">Current Mood Status</h2>
+                    <p class="text-gray-500">Today's emotional overview</p>
+                </div>
+                <div class="w-16 h-16 glass-card flex items-center justify-center rounded-2xl ml-4">
+                    <i class="fas fa-chart-line text-blue-500"></i>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-6 mb-8">
+                <div class="flex-1">
+                    <div class="h-3 bg-gradient-to-r from-green-400 to-blue-400 rounded-full mb-2" style="width: 75%"></div>
+                    <p class="text-sm text-gray-500">Weekly trend (+12% improvement)</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold text-gray-900">Calm</div>
+                    <div class="text-sm text-gray-500">Primary mood</div>
+                </div>
+            </div>
+            
+            <div class="glass-card p-6 border-l-4 border-blue-200 bg-blue-50/50">
+                <p class="text-lead text-gray-700">
+                    Consistent improvement in emotional stability observed this week.
+                </p>
+            </div>
+        </section>
+
+        <!-- Energy Tracker -->
+        <section class="glass-card p-8 text-center fade-in-up">
+            <div class="energy-circle w-28 h-28 mx-auto mb-6 relative">
+                <div class="energy-fill absolute inset-0 flex items-center justify-center">
+                    <div class="w-20 h-20 glass-card flex items-center justify-center rounded-full">
+                        <span class="font-bold text-lg text-gray-800">72%</span>
+                    </div>
+                </div>
+            </div>
+            <h3 class="h3 mb-3">Daily Energy Level</h3>
+            <p class="text-gray-600 mb-6">Moderate energy. Consider scheduled breaks.</p>
+            <button class="btn-secondary w-full">View Energy History</button>
+        </section>
+
+        <!-- Stress Monitor -->
+        <section class="glass-card p-8 fade-in-up">
+            <div class="flex items-start justify-between mb-6">
+                <div>
+                    <h3 class="h3 mb-1">Stress Monitor</h3>
+                    <p class="text-gray-500 text-sm">Real-time assessment</p>
+                </div>
+            </div>
+            <div class="w-full h-20 rounded-2xl bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 mb-6 relative overflow-hidden">
+                <div class="absolute inset-0 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-2xl">
+                    <span class="font-semibold text-lg text-gray-800">Moderate</span>
+                </div>
+            </div>
+            <button class="btn-primary w-full">Initiate Stress Management</button>
+        </section>
+
+        <!-- Goals Progress -->
+        <section class="lg:col-span-2 glass-card p-8 lg:p-10 fade-in-up">
+            <h3 class="h2 mb-8 flex items-center">
+                <i class="fas fa-bullseye mr-3 text-blue-500 w-6"></i>
+                Progress Tracking
+            </h3>
+            <div class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-semibold text-gray-900 mb-1">Daily Journaling</div>
+                        <div class="text-sm text-gray-500">6 days streak</div>
+                    </div>
+                    <div class="w-48">
+                        <div class="progress-bg">
+                            <div class="progress-fill bg-gradient-to-r from-blue-500 to-indigo-500" style="width: 65%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-semibold text-gray-900 mb-1">Meditation</div>
+                        <div class="text-sm text-gray-500">15 min avg</div>
+                    </div>
+                    <div class="w-48">
+                        <div class="progress-bg">
+                            <div class="progress-fill bg-gradient-to-r from-emerald-500 to-teal-500" style="width: 48%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-semibold text-gray-900 mb-1">Hydration</div>
+                        <div class="text-sm text-gray-500">2.1L consumed</div>
+                    </div>
+                    <div class="w-48">
+                        <div class="progress-bg">
+                            <div class="progress-fill bg-gradient-to-r from-orange-500 to-red-500" style="width: 82%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Insights -->
+        <section class="glass-card p-8 fade-in-up">
+            <div class="flex items-start space-x-4 mb-6">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-brain text-white text-sm"></i>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-900 mb-1">AI Analysis</h4>
+                    <p class="text-sm text-gray-500">Reflectra Intelligence</p>
+                </div>
+            </div>
+            <p class="text-lead text-gray-700 mb-6 leading-relaxed">
+                Your consistency with journaling is building positive momentum. Continue this trajectory for optimal results.
+            </p>
+            <button class="btn-primary w-full">Open AI Conversation</button>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="glass-card p-8 fade-in-up">
+            <h3 class="h3 mb-8">Quick Actions</h3>
+            <div class="space-y-3">
+                <button class="btn-primary w-full py-4 rounded-xl flex items-center justify-center space-x-3">
+                    <i class="fas fa-edit"></i>
+                    <span>Start Journal Entry</span>
+                </button>
+                <button class="btn-secondary w-full py-4 rounded-xl flex items-center justify-center space-x-3">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Consultation</span>
+                </button>
+                <button class="btn-primary w-full py-4 rounded-xl flex items-center justify-center space-x-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600">
+                    <i class="fas fa-spa"></i>
+                    <span>Guided Relaxation</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Weekly Summary -->
+        <section class="lg:col-span-3 glass-card p-8 lg:p-10 fade-in-up">
+            <h3 class="h2 mb-8">Weekly Summary</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="text-center p-8 glass-card hover:shadow-lg transition-all duration-300">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-orange-100 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-calendar-alt text-orange-600 text-2xl"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-900 mb-2">Monday Stress</div>
+                    <p class="text-gray-600 text-lg">Peak stress observed</p>
+                </div>
+                <div class="text-center p-8 glass-card hover:shadow-lg transition-all duration-300">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-bolt text-emerald-600 text-2xl"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-900 mb-2">Wednesday Peak</div>
+                    <p class="text-gray-600 text-lg">Highest energy day</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Staggered entrance animations
+        gsap.from(".fade-in-up", {
+            duration: 0.8,
+            y: 40,
+            opacity: 0,
+            stagger: 0.15,
+            ease: "power3.out",
+            delay: 0.2
+        });
+
+        // Button interactions
+        document.querySelectorAll('.btn-primary, .btn-secondary').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                gsap.to(btn, { scale: 1.02, duration: 0.2, ease: "power2.out" });
+            });
+            btn.addEventListener('mouseleave', () => {
+                gsap.to(btn, { scale: 1, duration: 0.2, ease: "power2.out" });
+            });
+        });
+
+        // Subtle breathing background
+        gsap.to("body", {
+            scale: 1.005,
+            duration: 4,
+            repeat: -1,
+            yoyo: true,
+            ease: "power1.inOut"
+        });
+    </script>
+</body>
+</html>

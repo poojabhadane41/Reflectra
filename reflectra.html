@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reflectra – Choose something gentle for your mind</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #f0e6f6;
+    --card-bg: rgba(255,255,255,0.55);
+    --accent: #c06abf;
+    --accent2: #8b5cf6;
+    --text: #3b1f4a;
+    --muted: #8a6a96;
+    --btn-bg: linear-gradient(135deg,#d98cd8,#a855c8);
+    --shadow: 0 8px 32px rgba(160,80,180,0.13);
+    --radius: 22px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+
+  /* ─── BACKGROUND BLOBS ─── */
+  .bg-blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.35;animation:blobFloat 12s ease-in-out infinite alternate;}
+  .blob1{width:520px;height:520px;background:radial-gradient(circle,#e879f9,#a855f7);top:-120px;left:-120px;animation-delay:0s;}
+  .blob2{width:400px;height:400px;background:radial-gradient(circle,#f9a8d4,#c084fc);bottom:-100px;right:-80px;animation-delay:3s;}
+  .blob3{width:300px;height:300px;background:radial-gradient(circle,#c4b5fd,#818cf8);top:40%;left:55%;animation-delay:6s;}
+  @keyframes blobFloat{0%{transform:translate(0,0) scale(1);}100%{transform:translate(30px,25px) scale(1.08);}}
+
+  /* ─── PAGES ─── */
+  .page{display:none;position:relative;z-index:1;min-height:100vh;padding:40px 20px 60px;}
+  .page.active{display:block;}
+
+  /* ─── MAIN PAGE ─── */
+  .main-header{text-align:center;padding:30px 0 20px;}
+  .logo{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,6vw,3.8rem);font-weight:600;color:var(--text);letter-spacing:-.5px;}
+  .logo span{display:inline-block;animation:spinStar 4s linear infinite;font-size:.7em;}
+  @keyframes spinStar{to{transform:rotate(360deg);}}
+  .tagline{font-size:1rem;color:var(--muted);margin-top:4px;font-weight:300;}
+
+  .section{max-width:860px;margin:32px auto 0;}
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+  .card{background:var(--card-bg);backdrop-filter:blur(14px);border:1.5px solid rgba(255,255,255,0.7);border-radius:var(--radius);padding:18px 22px;display:flex;align-items:center;gap:16px;margin-bottom:12px;cursor:pointer;transition:transform .25s,box-shadow .25s,border-color .25s;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,0));opacity:0;transition:opacity .3s;}
+  .card:hover{transform:translateY(-4px) scale(1.012);box-shadow:0 18px 45px rgba(160,80,180,.22);border-color:rgba(192,106,191,.5);}
+  .card:hover::before{opacity:1;}
+  .card:active{transform:scale(.98);}
+
+  .card-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;background:rgba(255,255,255,.6);flex-shrink:0;box-shadow:0 2px 8px rgba(160,80,180,.12);transition:transform .3s;}
+  .card:hover .card-icon{transform:scale(1.12) rotate(-4deg);}
+  .card-info{flex:1;}
+  .card-title{font-size:1.05rem;font-weight:500;color:var(--text);}
+  .card-desc{font-size:.85rem;color:var(--muted);margin-top:2px;font-weight:300;}
+  .card-btn{padding:9px 22px;border:none;border-radius:50px;background:var(--btn-bg);color:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:opacity .2s,transform .2s;box-shadow:0 4px 14px rgba(168,85,200,.35);white-space:nowrap;}
+  .card-btn:hover{opacity:.88;transform:scale(1.05);}
+
+  /* stagger animation */
+  .card{opacity:0;transform:translateY(24px);animation:cardIn .5s forwards;}
+  @keyframes cardIn{to{opacity:1;transform:translateY(0);}}
+
+  /* ─── ACTIVITY PAGES ─── */
+  .act-page{max-width:700px;margin:0 auto;}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.5);border:1.5px solid rgba(255,255,255,.7);border-radius:50px;padding:8px 20px;font-size:.9rem;color:var(--text);cursor:pointer;backdrop-filter:blur(10px);transition:background .2s,transform .2s;margin-bottom:28px;}
+  .back-btn:hover{background:rgba(255,255,255,.75);transform:translateX(-3px);}
+  .act-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3rem);font-weight:600;text-align:center;margin-bottom:8px;}
+  .act-subtitle{text-align:center;color:var(--muted);margin-bottom:32px;font-size:1rem;font-weight:300;}
+  .act-card{background:var(--card-bg);backdrop-filter:blur(18px);border:1.5px solid rgba(255,255,255,.7);border-radius:28px;padding:36px 32px;box-shadow:var(--shadow);}
+
+  /* ── DEEP BREATHING ── */
+  .breath-ring{width:200px;height:200px;border-radius:50%;margin:0 auto 28px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:500;color:#fff;background:radial-gradient(circle,#e879f9,#a855f7);box-shadow:0 0 0 0 rgba(168,85,247,.4);transition:transform 1s ease-in-out;position:relative;}
+  .breath-ring.expand{animation:expandRing 4s ease-in-out forwards;}
+  .breath-ring.hold{animation:none;transform:scale(1.5);}
+  .breath-ring.shrink{animation:shrinkRing 4s ease-in-out forwards;}
+  @keyframes expandRing{0%{transform:scale(1);box-shadow:0 0 0 0 rgba(168,85,247,.4);}100%{transform:scale(1.55);box-shadow:0 0 60px 20px rgba(168,85,247,.25);}}
+  @keyframes shrinkRing{0%{transform:scale(1.55);}100%{transform:scale(1);}}
+  .breath-label{font-size:1rem;text-align:center;color:var(--muted);margin-bottom:20px;height:24px;}
+  .breath-counter{text-align:center;font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--accent2);margin-bottom:20px;}
+  .big-btn{display:block;margin:0 auto;padding:14px 48px;background:var(--btn-bg);border:none;border-radius:50px;color:#fff;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;cursor:pointer;box-shadow:0 6px 20px rgba(168,85,200,.35);transition:transform .2s,opacity .2s;}
+  .big-btn:hover{transform:scale(1.05);opacity:.9;}
+
+  /* ── POP BALLOON ── */
+  .balloon-arena{min-height:320px;position:relative;overflow:hidden;border-radius:18px;background:linear-gradient(135deg,rgba(249,168,212,.2),rgba(196,181,253,.2));}
+  .balloon{position:absolute;cursor:pointer;font-size:3rem;animation:floatUp linear forwards;user-select:none;transition:transform .1s;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15));}
+  .balloon:hover{transform:scale(1.15);}
+  @keyframes floatUp{0%{bottom:-80px;opacity:1;}85%{opacity:1;}100%{bottom:110%;opacity:0;}}
+  .pop-score{text-align:center;font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--accent2);margin-bottom:16px;}
+  .pop-score span{font-size:1rem;color:var(--muted);font-family:'DM Sans',sans-serif;}
+  .pop-burst{position:absolute;pointer-events:none;font-size:1.8rem;animation:burst .6s forwards;}
+  @keyframes burst{0%{opacity:1;transform:scale(.5);}60%{opacity:1;transform:scale(1.6);}100%{opacity:0;transform:scale(2);}}
+
+  /* ── MINDFUL WALK ── */
+  .walk-scene{height:220px;border-radius:18px;overflow:hidden;position:relative;background:linear-gradient(180deg,#c4e0f9 0%,#e8f5e9 60%,#a5d6a7 100%);}
+  .walk-sun{width:60px;height:60px;background:radial-gradient(circle,#ffe082,#ffca28);border-radius:50%;position:absolute;top:24px;right:60px;box-shadow:0 0 30px rgba(255,202,40,.5);animation:sunPulse 3s ease-in-out infinite;}
+  @keyframes sunPulse{0%,100%{box-shadow:0 0 30px rgba(255,202,40,.5);}50%{box-shadow:0 0 50px rgba(255,202,40,.7);}}
+  .walk-ground{position:absolute;bottom:0;left:0;right:0;height:60px;background:#a5d6a7;}
+  .walk-path{position:absolute;bottom:30px;left:0;right:0;height:8px;background:rgba(255,255,255,.4);border-radius:4px;}
+  .walk-figure{position:absolute;bottom:50px;font-size:2.2rem;animation:walkAcross 8s linear infinite;}
+  @keyframes walkAcross{0%{left:-60px;}100%{left:calc(100% + 40px);}}
+  .walk-cloud{position:absolute;font-size:2.5rem;animation:cloudDrift linear infinite;}
+  .cloud1{top:20px;animation-duration:18s;animation-delay:0s;}
+  .cloud2{top:40px;animation-duration:22s;animation-delay:-8s;}
+  @keyframes cloudDrift{0%{left:110%;}100%{left:-120px;}}
+  .walk-steps{text-align:center;font-family:'Cormorant Garamond',serif;font-size:2.5rem;color:var(--accent2);margin:20px 0 6px;}
+  .walk-prompt{text-align:center;color:var(--muted);font-size:.95rem;margin-bottom:20px;min-height:22px;transition:opacity .4s;}
+
+  /* ── UNIVERSE DRIFT ── */
+  .cosmos{height:300px;border-radius:18px;background:#0a0015;position:relative;overflow:hidden;}
+  .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle linear infinite;}
+  @keyframes twinkle{0%,100%{opacity:.3;}50%{opacity:1;}}
+  .drift-ship{position:absolute;font-size:2.5rem;animation:shipDrift 10s ease-in-out infinite alternate;bottom:80px;left:50%;transform:translateX(-50%);}
+  @keyframes shipDrift{0%{transform:translateX(-60%) translateY(0);}100%{transform:translateX(60%) translateY(-30px);}}
+  .shooting-star{position:absolute;width:120px;height:2px;background:linear-gradient(90deg,rgba(255,255,255,0),#fff);border-radius:2px;animation:shoot 4s linear infinite;opacity:0;}
+  @keyframes shoot{0%{opacity:0;transform:translateX(-100px) translateY(0);}30%{opacity:1;}100%{opacity:0;transform:translateX(400px) translateY(80px);}}
+  .drift-quote{text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-style:italic;color:var(--text);margin:24px 0 12px;line-height:1.6;}
+  .drift-quote-small{text-align:center;color:var(--muted);font-size:.85rem;}
+
+  /* ── DRAW THOUGHTS ── */
+  #drawCanvas{border-radius:16px;display:block;width:100%;touch-action:none;cursor:crosshair;background:#fff9fe;}
+  .draw-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+  .color-dot{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:transform .2s,border-color .2s;}
+  .color-dot.active{border-color:var(--text);transform:scale(1.2);}
+  .size-btn{padding:6px 14px;border-radius:50px;border:1.5px solid rgba(160,80,180,.3);background:rgba(255,255,255,.6);cursor:pointer;font-size:.85rem;transition:background .2s;}
+  .size-btn.active,.size-btn:hover{background:var(--btn-bg);color:#fff;border-color:transparent;}
+  .draw-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  .outline-btn{padding:10px 24px;border-radius:50px;border:1.5px solid rgba(160,80,180,.4);background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .2s;}
+  .outline-btn:hover{background:rgba(160,80,180,.1);}
+
+  /* ── ACT OF KINDNESS ── */
+  .kindness-card{background:linear-gradient(135deg,rgba(249,168,212,.25),rgba(196,181,253,.25));border-radius:20px;padding:28px;text-align:center;margin-bottom:20px;border:1.5px solid rgba(255,255,255,.7);}
+  .kindness-icon{font-size:3.5rem;margin-bottom:12px;display:block;animation:heartBeat 1.5s ease-in-out infinite;}
+  @keyframes heartBeat{0%,100%{transform:scale(1);}14%{transform:scale(1.2);}28%{transform:scale(1);}42%{transform:scale(1.15);}70%{transform:scale(1);}}
+  .kindness-text{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--text);line-height:1.5;margin-bottom:8px;}
+  .kindness-hint{color:var(--muted);font-size:.9rem;}
+  .kindness-check{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.5);border-radius:14px;padding:14px 18px;margin-bottom:10px;cursor:pointer;border:1.5px solid rgba(255,255,255,.7);transition:background .2s,transform .2s;}
+  .kindness-check:hover{background:rgba(255,255,255,.75);transform:translateX(4px);}
+  .kindness-check input{width:20px;height:20px;accent-color:var(--accent);cursor:pointer;}
+  .kindness-check label{cursor:pointer;font-size:.95rem;color:var(--text);}
+
+  /* ─── CONFETTI ─── */
+  .confetti-piece{position:fixed;top:-20px;width:10px;height:10px;border-radius:2px;z-index:9999;pointer-events:none;animation:confettiFall linear forwards;}
+  @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+
+  /* ─── RESPONSIVE ─── */
+  @media(max-width:600px){
+    .page{padding:24px 14px 50px;}
+    .act-card{padding:24px 18px;}
+    .card{padding:14px 16px;}
+    .card-btn{padding:8px 16px;font-size:.82rem;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-blobs">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+</div>
+
+<!-- ══════════════ MAIN PAGE ══════════════ -->
+<div class="page active" id="page-main">
+  <div class="main-header">
+    <div class="logo">Reflectra <span>✦</span></div>
+    <div class="tagline">Choose something gentle for your mind</div>
+  </div>
+
+  <!-- Stress Relief -->
+  <div class="section">
+    <div class="section-title">🫧 Stress Relief</div>
+
+    <div class="card" style="animation-delay:.05s" onclick="goto('deep-breathing')">
+      <div class="card-icon">🫁</div>
+      <div class="card-info">
+        <div class="card-title">Deep Breathing</div>
+        <div class="card-desc">Slow inhale, slower exhale</div>
+      </div>
+      <button class="card-btn" onclick="event.stopPropagation();goto('deep-breathing')">Start</button>
+    </div>
+
+    <div class="card" style="animation-delay:.12s" onclick="goto('pop-balloon')">
+      <div class="card-icon">🎈</div>
+      <div class="card-info">
+        <div class="card-title">Pop the Balloon</div>
+        <div class="card-desc">Release stress playfully</div>
+      </div>
+      <button class="card-btn" onclick="event.stopPropagation();goto('pop-balloon')">Play</button>
+    </div>
+  </div>
+
+  <!-- Calm Focus -->
+  <div class="section">
+    <div class="section-title">🌿 Calm Focus</div>
+
+    <div class="card" style="animation-delay:.19s" onclick="goto('mindful-walk')">
+      <div class="card-icon">🌳</div>
+      <div class="card-info">
+        <div class="card-title">Mindful Walk</div>
+        <div class="card-desc">Imagine a peaceful walk</div>
+      </div>
+      <button class="card-btn" onclick="event.stopPropagation();goto('mindful-walk')">Begin</button>
+    </div>
+
+    <div class="card" style="animation-delay:.26s" onclick="goto('universe-drift')">
+      <div class="card-icon">🌌</div>
+      <div class="card-info">
+        <div class="card-title">Universe Drift</div>
+        <div class="card-desc">Float among the stars</div>
+      </div>
+      <button class="card-btn" onclick="event.stopPropagation();goto('universe-drift')">Relax</button>
+    </div>
+  </div>
+
+  <!-- Self Growth -->
+  <div class="section">
+    <div class="section-title">✨ Self Growth</div>
+
+    <div class="card" style="animation-delay:.33s" onclick="goto('draw-thoughts')">
+      <div class="card-icon">🎨</div>
+      <div class="card-info">
+        <div class="card-title">Draw Your Thoughts</div>
+        <div class="card-desc">No rules. Just flow.</div>
+      </div>
+      <button class="card-btn" onclick="event.stopPropagation();goto('draw-thoughts')">Create</button>
+    </div>
+
+    <div class="card" style="animation-delay:.40s" onclick="goto('act-kindness')">
+      <div class="card-icon">💝</div>
+      <div class="card-info">
+        <div class="card-title">Act of Kindness</div>
+        <div class="card-desc">Small kindness, big warmth</div>
+      </div>
+      <button class="card-btn" onclick="event.stopPropagation();goto('act-kindness')">Try</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ DEEP BREATHING ══════════════ -->
+<div class="page" id="page-deep-breathing">
+  <div class="act-page">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="act-title">🫁 Deep Breathing</div>
+    <div class="act-subtitle">Follow the circle — breathe with it</div>
+    <div class="act-card">
+      <div class="breath-counter" id="breathTimer">4</div>
+      <div class="breath-label" id="breathLabel">Press Start to begin</div>
+      <div class="breath-ring" id="breathRing">Breathe</div>
+      <br/>
+      <div style="text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:20px;">Cycles completed: <strong id="breathCycles">0</strong></div>
+      <button class="big-btn" id="breathBtn" onclick="startBreathing()">Start</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ POP BALLOON ══════════════ -->
+<div class="page" id="page-pop-balloon">
+  <div class="act-page">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="act-title">🎈 Pop the Balloon</div>
+    <div class="act-subtitle">Tap every balloon before it floats away!</div>
+    <div class="act-card">
+      <div class="pop-score"><span>Score: </span><span id="popScore">0</span></div>
+      <div class="balloon-arena" id="balloonArena"></div>
+      <br/>
+      <button class="big-btn" id="popBtn" onclick="startBalloons()">Launch Balloons 🎈</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MINDFUL WALK ══════════════ -->
+<div class="page" id="page-mindful-walk">
+  <div class="act-page">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="act-title">🌳 Mindful Walk</div>
+    <div class="act-subtitle">Step by step, breath by breath</div>
+    <div class="act-card">
+      <div class="walk-scene">
+        <div class="walk-sun"></div>
+        <div class="walk-cloud cloud1">☁️</div>
+        <div class="walk-cloud cloud2">☁️</div>
+        <div class="walk-ground"></div>
+        <div class="walk-path"></div>
+        <div class="walk-figure" id="walkFigure">🚶</div>
+      </div>
+      <div class="walk-steps" id="walkSteps">0 <span style="font-size:1rem;color:var(--muted);">steps</span></div>
+      <div class="walk-prompt" id="walkPrompt">Press Begin to start your walk…</div>
+      <button class="big-btn" id="walkBtn" onclick="startWalk()">Begin Walk</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ UNIVERSE DRIFT ══════════════ -->
+<div class="page" id="page-universe-drift">
+  <div class="act-page">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="act-title" style="color:#d8b4fe;">🌌 Universe Drift</div>
+    <div class="act-subtitle">You are tiny, and that is peaceful</div>
+    <div class="act-card" style="background:rgba(10,0,21,.7);border-color:rgba(100,60,160,.4);">
+      <div class="cosmos" id="cosmos">
+        <div class="drift-ship">🚀</div>
+        <!-- stars injected by JS -->
+      </div>
+      <div class="drift-quote" id="driftQuote" style="color:#e9d5ff;">"The cosmos is within us. We are made of star-stuff."</div>
+      <div class="drift-quote-small" id="driftAuthor" style="color:#a78bfa;">— Carl Sagan</div>
+      <br/>
+      <button class="big-btn" onclick="nextQuote()">Next Thought ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ DRAW THOUGHTS ══════════════ -->
+<div class="page" id="page-draw-thoughts">
+  <div class="act-page">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="act-title">🎨 Draw Your Thoughts</div>
+    <div class="act-subtitle">No judgement. Just colours and feeling.</div>
+    <div class="act-card">
+      <div class="draw-tools">
+        <div class="color-dot active" style="background:#a855c8;" data-color="#a855c8" onclick="setColor(this)"></div>
+        <div class="color-dot" style="background:#e879f9;" data-color="#e879f9" onclick="setColor(this)"></div>
+        <div class="color-dot" style="background:#f43f5e;" data-color="#f43f5e" onclick="setColor(this)"></div>
+        <div class="color-dot" style="background:#f97316;" data-color="#f97316" onclick="setColor(this)"></div>
+        <div class="color-dot" style="background:#facc15;" data-color="#facc15" onclick="setColor(this)"></div>
+        <div class="color-dot" style="background:#22c55e;" data-color="#22c55e" onclick="setColor(this)"></div>
+        <div class="color-dot" style="background:#38bdf8;" data-color="#38bdf8" onclick="setColor(this)"></div>
+        <div class="color-dot" style="background:#1e293b;" data-color="#1e293b" onclick="setColor(this)"></div>
+        <div class="color-dot" style="background:#fff;border:2px solid #ddd;" data-color="#ffffff" onclick="setColor(this)"></div>
+        <div style="flex:1"></div>
+        <button class="size-btn active" data-size="4" onclick="setSize(this)">S</button>
+        <button class="size-btn" data-size="10" onclick="setSize(this)">M</button>
+        <button class="size-btn" data-size="22" onclick="setSize(this)">L</button>
+        <button class="size-btn" data-size="50" onclick="setSize(this)">XL</button>
+      </div>
+      <canvas id="drawCanvas" height="280"></canvas>
+      <div class="draw-actions">
+        <button class="outline-btn" onclick="clearCanvas()">🗑 Clear</button>
+        <button class="outline-btn" onclick="saveCanvas()">💾 Save</button>
+        <button class="outline-btn" onclick="fillRandom()">🎲 Surprise</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ACT OF KINDNESS ══════════════ -->
+<div class="page" id="page-act-kindness">
+  <div class="act-page">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="act-title">💝 Act of Kindness</div>
+    <div class="act-subtitle">Small gestures ripple outward forever</div>
+    <div class="act-card">
+      <div class="kindness-card">
+        <span class="kindness-icon" id="kindnessIcon">💌</span>
+        <div class="kindness-text" id="kindnessText">Send a message to someone you haven't spoken to in a while.</div>
+        <div class="kindness-hint" id="kindnessHint">Even a single "thinking of you" can change someone's day.</div>
+      </div>
+
+      <div style="margin-bottom:16px;font-weight:500;color:var(--text);">Today's kindness checklist</div>
+      <div class="kindness-check"><input type="checkbox" id="k1" onchange="checkKind(this)"><label for="k1">😊 Smile at a stranger</label></div>
+      <div class="kindness-check"><input type="checkbox" id="k2" onchange="checkKind(this)"><label for="k2">🙏 Say thank you, and mean it</label></div>
+      <div class="kindness-check"><input type="checkbox" id="k3" onchange="checkKind(this)"><label for="k3">🎁 Give a small compliment</label></div>
+      <div class="kindness-check"><input type="checkbox" id="k4" onchange="checkKind(this)"><label for="k4">📞 Check in on a friend</label></div>
+      <div class="kindness-check"><input type="checkbox" id="k5" onchange="checkKind(this)"><label for="k5">🌱 Do something kind for yourself</label></div>
+
+      <br/>
+      <button class="big-btn" onclick="newKindness()">✦ New Idea</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── NAVIGATION ───
+function goto(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='draw-thoughts') initCanvas();
+  if(id==='universe-drift') buildStars();
+  if(id==='pop-balloon'){popScore=0;document.getElementById('popScore').textContent='0';}
+}
+function goBack(){
+  stopBreathing(); stopWalk(); stopBalloons();
+  goto('main');
+}
+
+// ─── DEEP BREATHING ───
+let breathPhase='idle',breathInterval=null,breathTick=0,breathCycleCount=0;
+const phases=[
+  {name:'Inhale',duration:4,class:'expand'},
+  {name:'Hold',duration:4,class:'hold'},
+  {name:'Exhale',duration:6,class:'shrink'},
+  {name:'Pause',duration:2,class:''}
+];
+let phaseIdx=0;
+
+function startBreathing(){
+  stopBreathing();
+  phaseIdx=0; breathCycleCount=0;
+  document.getElementById('breathCycles').textContent=0;
+  document.getElementById('breathBtn').textContent='Stop';
+  document.getElementById('breathBtn').onclick=stopBreathing;
+  runPhase();
+}
+function runPhase(){
+  const p=phases[phaseIdx];
+  const ring=document.getElementById('breathRing');
+  const lbl=document.getElementById('breathLabel');
+  const tmr=document.getElementById('breathTimer');
+  ring.className='breath-ring '+(p.class||'');
+  ring.textContent=p.name;
+  lbl.textContent=p.name+' for '+p.duration+'s…';
+  let t=p.duration;
+  tmr.textContent=t;
+  breathInterval=setInterval(()=>{
+    t--;
+    tmr.textContent=t;
+    if(t<=0){
+      clearInterval(breathInterval);
+      phaseIdx=(phaseIdx+1)%phases.length;
+      if(phaseIdx===0){
+        breathCycleCount++;
+        document.getElementById('breathCycles').textContent=breathCycleCount;
+      }
+      runPhase();
+    }
+  },1000);
+}
+function stopBreathing(){
+  clearInterval(breathInterval);
+  const ring=document.getElementById('breathRing');
+  ring.className='breath-ring';
+  ring.textContent='Breathe';
+  document.getElementById('breathLabel').textContent='Press Start to begin';
+  document.getElementById('breathTimer').textContent='4';
+  document.getElementById('breathBtn').textContent='Start';
+  document.getElementById('breathBtn').onclick=startBreathing;
+}
+
+// ─── POP BALLOON ───
+let popScore=0,balloonInterval=null,balloonTimeout=null;
+const balloonEmojis=['🎈','🎀','🔴','🟣','🟡','🟢','🔵','🟠'];
+const popEmojis=['💥','✨','🌟','💫','🎉'];
+
+function startBalloons(){
+  stopBalloons();
+  popScore=0; document.getElementById('popScore').textContent=0;
+  document.getElementById('popBtn').textContent='Stop 🛑';
+  document.getElementById('popBtn').onclick=stopBalloons;
+  spawnBalloon(); balloonInterval=setInterval(spawnBalloon,900);
+  balloonTimeout=setTimeout(()=>{stopBalloons();document.getElementById('popBtn').textContent='Play Again 🎈';document.getElementById('popBtn').onclick=startBalloons;showConfetti();},30000);
+}
+function spawnBalloon(){
+  const arena=document.getElementById('balloonArena');
+  const b=document.createElement('div');
+  b.className='balloon';
+  b.textContent=balloonEmojis[Math.floor(Math.random()*balloonEmojis.length)];
+  const dur=2.5+Math.random()*3;
+  b.style.left=Math.random()*88+'%';
+  b.style.animationDuration=dur+'s';
+  b.onclick=function(e){
+    const burst=document.createElement('div');
+    burst.className='pop-burst';
+    burst.textContent=popEmojis[Math.floor(Math.random()*popEmojis.length)];
+    burst.style.left=e.clientX-arena.getBoundingClientRect().left-20+'px';
+    burst.style.top=e.clientY-arena.getBoundingClientRect().top-20+'px';
+    arena.appendChild(burst);
+    setTimeout(()=>burst.remove(),700);
+    b.remove();
+    popScore++;
+    document.getElementById('popScore').textContent=popScore;
+  };
+  arena.appendChild(b);
+  setTimeout(()=>b.remove(),dur*1000);
+}
+function stopBalloons(){
+  clearInterval(balloonInterval);
+  clearTimeout(balloonTimeout);
+  document.getElementById('balloonArena').innerHTML='';
+  document.getElementById('popBtn').textContent='Launch Balloons 🎈';
+  document.getElementById('popBtn').onclick=startBalloons;
+}
+
+// ─── MINDFUL WALK ───
+const walkPrompts=[
+  'Notice five things you can see around you…',
+  'Feel your feet on the ground, solid and sure.',
+  'Take a slow breath and release any tension.',
+  'Listen — what sounds are nearby?',
+  'Your pace is perfect. You are exactly where you need to be.',
+  'Soften your shoulders. Let your arms swing gently.',
+  'Notice the quality of the light around you.',
+  'You are safe. You are calm. You are here.',
+  'Each step forward is a small act of courage.',
+  'The path ahead is open and welcoming.',
+];
+let walkSteps=0,walkInterval=null,walkPromptIdx=0;
+
+function startWalk(){
+  if(walkInterval){stopWalk();return;}
+  document.getElementById('walkBtn').textContent='Pause Walk';
+  walkPromptIdx=Math.floor(Math.random()*walkPrompts.length);
+  showWalkPrompt();
+  walkInterval=setInterval(()=>{
+    walkSteps++;
+    document.getElementById('walkSteps').innerHTML=walkSteps+' <span style="font-size:1rem;color:var(--muted);">steps</span>';
+    if(walkSteps%10===0){
+      walkPromptIdx=(walkPromptIdx+1)%walkPrompts.length;
+      showWalkPrompt();
+    }
+  },800);
+}
+function showWalkPrompt(){
+  const el=document.getElementById('walkPrompt');
+  el.style.opacity=0;
+  setTimeout(()=>{el.textContent=walkPrompts[walkPromptIdx];el.style.opacity=1;},300);
+}
+function stopWalk(){
+  clearInterval(walkInterval); walkInterval=null;
+  document.getElementById('walkBtn').textContent='Begin Walk';
+}
+
+// ─── UNIVERSE DRIFT ───
+const driftQuotes=[
+  {q:'"The cosmos is within us. We are made of star-stuff."',a:'— Carl Sagan'},
+  {q:'"We are all connected; to each other, biologically. To the earth, chemically. To the rest of the universe, atomically."',a:'— Neil deGrasse Tyson'},
+  {q:'"The universe is under no obligation to make sense to you."',a:'— Neil deGrasse Tyson'},
+  {q:'"Somewhere, something incredible is waiting to be known."',a:'— Carl Sagan'},
+  {q:'"Even the darkest night will end and the sun will rise."',a:'— Victor Hugo'},
+  {q:'"You are a function of what the whole universe is doing, in the same way that a wave is a function of what the whole ocean is doing."',a:'— Alan Watts'},
+  {q:'"Be still and know that you are part of something vast."',a:'— Reflectra'},
+];
+let driftIdx=0;
+function buildStars(){
+  const c=document.getElementById('cosmos');
+  c.querySelectorAll('.star,.shooting-star').forEach(s=>s.remove());
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=Math.random()*2.5+.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-duration:${1+Math.random()*3}s;animation-delay:${Math.random()*3}s;`;
+    c.appendChild(s);
+  }
+  for(let i=0;i<4;i++){
+    const s=document.createElement('div');
+    s.className='shooting-star';
+    s.style.cssText=`top:${10+Math.random()*60}%;left:${Math.random()*50}%;animation-delay:${i*2}s;transform:rotate(-25deg);`;
+    c.appendChild(s);
+  }
+}
+function nextQuote(){
+  driftIdx=(driftIdx+1)%driftQuotes.length;
+  const q=document.getElementById('driftQuote');
+  const a=document.getElementById('driftAuthor');
+  q.style.opacity=0; a.style.opacity=0;
+  setTimeout(()=>{
+    q.textContent=driftQuotes[driftIdx].q;
+    a.textContent=driftQuotes[driftIdx].a;
+    q.style.transition='opacity .6s'; a.style.transition='opacity .6s';
+    q.style.opacity=1; a.style.opacity=1;
+  },300);
+}
+
+// ─── DRAW THOUGHTS ───
+let drawCtx,drawing=false,drawColor='#a855c8',drawSize=4;
+function initCanvas(){
+  const canvas=document.getElementById('drawCanvas');
+  canvas.width=canvas.offsetWidth;
+  drawCtx=canvas.getContext('2d');
+  drawCtx.lineCap='round';
+  drawCtx.lineJoin='round';
+  canvas.onmousedown=e=>{drawing=true;drawCtx.beginPath();drawCtx.moveTo(pos(e,canvas).x,pos(e,canvas).y);};
+  canvas.onmousemove=e=>{if(!drawing)return;drawCtx.strokeStyle=drawColor;drawCtx.lineWidth=drawSize;drawCtx.lineTo(pos(e,canvas).x,pos(e,canvas).y);drawCtx.stroke();};
+  canvas.onmouseup=canvas.onmouseleave=()=>drawing=false;
+  canvas.ontouchstart=e=>{e.preventDefault();drawing=true;const t=e.touches[0];drawCtx.beginPath();drawCtx.moveTo(pos(t,canvas).x,pos(t,canvas).y);};
+  canvas.ontouchmove=e=>{e.preventDefault();if(!drawing)return;const t=e.touches[0];drawCtx.strokeStyle=drawColor;drawCtx.lineWidth=drawSize;drawCtx.lineTo(pos(t,canvas).x,pos(t,canvas).y);drawCtx.stroke();};
+  canvas.ontouchend=()=>drawing=false;
+}
+function pos(e,canvas){
+  const r=canvas.getBoundingClientRect();
+  return{x:((e.clientX||e.pageX)-r.left)*(canvas.width/r.width),y:((e.clientY||e.pageY)-r.top)*(canvas.height/r.height)};
+}
+function setColor(el){
+  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active'));
+  el.classList.add('active');
+  drawColor=el.dataset.color;
+}
+function setSize(el){
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  drawSize=parseInt(el.dataset.size);
+}
+function clearCanvas(){
+  const c=document.getElementById('drawCanvas');
+  drawCtx.clearRect(0,0,c.width,c.height);
+}
+function saveCanvas(){
+  const link=document.createElement('a');
+  link.download='my-thoughts.png';
+  link.href=document.getElementById('drawCanvas').toDataURL();
+  link.click();
+}
+function fillRandom(){
+  const c=document.getElementById('drawCanvas');
+  const cols=['#e879f9','#a855f7','#38bdf8','#f43f5e','#facc15','#22c55e','#f97316'];
+  for(let i=0;i<18;i++){
+    setTimeout(()=>{
+      drawCtx.beginPath();
+      drawCtx.strokeStyle=cols[Math.floor(Math.random()*cols.length)];
+      drawCtx.lineWidth=4+Math.random()*20;
+      drawCtx.moveTo(Math.random()*c.width,Math.random()*c.height);
+      drawCtx.bezierCurveTo(Math.random()*c.width,Math.random()*c.height,Math.random()*c.width,Math.random()*c.height,Math.random()*c.width,Math.random()*c.height);
+      drawCtx.stroke();
+    },i*60);
+  }
+}
+
+// ─── ACT OF KINDNESS ───
+const kindnessIdeas=[
+  {icon:'💌',text:'Send a message to someone you haven\'t spoken to in a while.',hint:'Even a single "thinking of you" can change someone\'s day.'},
+  {icon:'☕',text:'Buy a coffee or tea for the person behind you.',hint:'A spontaneous act of generosity creates a ripple effect.'},
+  {icon:'📖',text:'Share a book, article, or idea that inspired you.',hint:'Knowledge shared is knowledge multiplied.'},
+  {icon:'🌷',text:'Leave an uplifting note for someone to find.',hint:'A few kind words can echo in someone\'s heart for years.'},
+  {icon:'🤝',text:'Offer to help someone who looks like they\'re struggling.',hint:'Asking "can I help?" costs nothing and means everything.'},
+  {icon:'🎶',text:'Share a song that always lifts your mood.',hint:'Music is a universal language of comfort.'},
+  {icon:'🌟',text:'Give a genuine, specific compliment to someone today.',hint:'Specificity makes compliments feel real and remembered.'},
+  {icon:'🍪',text:'Bake or bring something delicious to share.',hint:'Food made with love is one of life\'s best gifts.'},
+];
+let kindIdx=0;
+function newKindness(){
+  kindIdx=(kindIdx+1)%kindnessIdeas.length;
+  const k=kindnessIdeas[kindIdx];
+  const icon=document.getElementById('kindnessIcon');
+  const txt=document.getElementById('kindnessText');
+  const hint=document.getElementById('kindnessHint');
+  icon.style.transform='scale(0)';
+  setTimeout(()=>{icon.textContent=k.icon;icon.style.transform='';txt.textContent=k.text;hint.textContent=k.hint;},200);
+}
+function checkKind(el){
+  if(el.checked){
+    showConfetti();
+    const lbl=el.nextElementSibling;
+    lbl.style.textDecoration='line-through';
+    lbl.style.color='var(--muted)';
+  }
+}
+
+// ─── CONFETTI ───
+function showConfetti(){
+  const colors=['#e879f9','#a855f7','#f43f5e','#facc15','#22c55e','#38bdf8','#f97316'];
+  for(let i=0;i<45;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');
+      c.className='confetti-piece';
+      c.style.left=Math.random()*100+'vw';
+      c.style.background=colors[Math.floor(Math.random()*colors.length)];
+      c.style.width=6+Math.random()*10+'px';
+      c.style.height=6+Math.random()*10+'px';
+      c.style.animationDuration=1.5+Math.random()*2+'s';
+      c.style.animationDelay=Math.random()*.8+'s';
+      c.style.borderRadius=Math.random()>0.5?'50%':'2px';
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),4000);
+    },i*35);
+  }
+}
+</script>
+</body>
+</html>

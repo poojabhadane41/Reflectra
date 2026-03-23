@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cosmic Ripple Challenges – Reflectra</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#07060f;
+  --surface:rgba(255,255,255,.05);
+  --border:rgba(255,255,255,.1);
+  --accent:#7c3aed;
+  --accent2:#06b6d4;
+  --accent3:#f472b6;
+  --accent4:#34d399;
+  --text:#f1f0ff;
+  --muted:#8b8aaa;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;}
+
+#starCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.nebula{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:nFloat 18s ease-in-out infinite alternate;}
+.n1{width:700px;height:700px;background:radial-gradient(circle,rgba(124,58,237,.25),transparent 70%);top:-200px;left:-200px;}
+.n2{width:500px;height:500px;background:radial-gradient(circle,rgba(6,182,212,.2),transparent 70%);bottom:-150px;right:-100px;animation-direction:alternate-reverse;}
+.n3{width:400px;height:400px;background:radial-gradient(circle,rgba(244,114,182,.15),transparent 70%);top:40%;left:60%;animation-duration:22s;}
+@keyframes nFloat{0%{transform:translate(0,0) scale(1);}100%{transform:translate(40px,30px) scale(1.1);}}
+
+.page{display:none;position:relative;z-index:1;min-height:100vh;}
+.page.active{display:block;}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;background:rgba(7,6,15,.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.nav-logo{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,#7c3aed,#06b6d4);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-back{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:50px;padding:8px 20px;color:var(--text);font-size:.88rem;cursor:pointer;transition:all .2s;font-family:'Space Grotesk',sans-serif;}
+.nav-back:hover{background:rgba(124,58,237,.25);border-color:var(--accent);}
+
+.hero{padding:70px 40px 30px;max-width:1200px;margin:0 auto;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.4);border-radius:50px;padding:6px 18px;font-size:.8rem;color:#a78bfa;margin-bottom:24px;animation:fadeUp .6s forwards;}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(2.8rem,8vw,6rem);font-weight:800;line-height:.92;margin-bottom:24px;animation:fadeUp .7s .1s both;}
+.hero-grad{background:linear-gradient(135deg,#c084fc,#06b6d4,#f472b6);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;}
+.hero-desc{font-size:1rem;color:var(--muted);max-width:500px;line-height:1.7;animation:fadeUp .7s .2s both;}
+.hero-desc strong{color:var(--accent2);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+
+.challenges-section{padding:10px 40px 80px;max-width:1200px;margin:0 auto;}
+.section-label{font-size:.75rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;}
+
+.ch-card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:32px 28px 28px;cursor:pointer;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s;animation:cardIn .5s both;}
+.ch-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--cg,rgba(124,58,237,.15)),transparent 70%);opacity:0;transition:opacity .3s;}
+.ch-card:hover{transform:translateY(-8px) scale(1.02);border-color:rgba(255,255,255,.22);box-shadow:0 24px 60px rgba(0,0,0,.5);}
+.ch-card:hover::before{opacity:1;}
+.ch-card:active{transform:scale(.97);}
+@keyframes cardIn{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+
+.card-badge{position:absolute;top:20px;right:20px;font-size:.68rem;padding:4px 12px;border-radius:50px;font-weight:700;letter-spacing:.5px;}
+.b-new{background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3);}
+.b-hot{background:rgba(244,114,182,.15);color:#f472b6;border:1px solid rgba(244,114,182,.3);}
+.b-deep{background:rgba(124,58,237,.15);color:#a78bfa;border:1px solid rgba(124,58,237,.3);}
+
+.card-icon{width:62px;height:62px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin-bottom:20px;}
+.card-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:8px;}
+.card-desc{font-size:.84rem;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+.card-meta{display:flex;align-items:center;gap:8px;}
+.card-time{font-size:.76rem;color:var(--muted);}
+.card-cta{margin-left:auto;padding:7px 18px;border:none;border-radius:50px;font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:transform .2s,opacity .2s;color:#fff;}
+.card-cta:hover{transform:scale(1.06);opacity:.9;}
+
+/* ── ACT PAGES ── */
+.act-wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
+.act-hero{text-align:center;margin-bottom:36px;}
+.act-icon-big{font-size:3.8rem;display:block;margin-bottom:14px;animation:iBounce 2s ease-in-out infinite;}
+@keyframes iBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.act-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800;margin-bottom:8px;}
+.act-sub{color:var(--muted);font-size:.97rem;line-height:1.6;}
+
+.glass{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:28px;padding:34px 30px;backdrop-filter:blur(20px);}
+
+.big-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 42px;border:none;border-radius:50px;font-family:'Syne',sans-serif;font-size:.97rem;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s;color:#fff;}
+.big-btn:hover{transform:scale(1.04);box-shadow:0 12px 35px rgba(0,0,0,.4);}
+.btn-v{background:linear-gradient(135deg,#7c3aed,#a855f7);}
+.btn-c{background:linear-gradient(135deg,#0891b2,#06b6d4);}
+.btn-p{background:linear-gradient(135deg,#db2777,#f472b6);}
+.btn-g{background:linear-gradient(135deg,#059669,#34d399);}
+.btn-o{background:linear-gradient(135deg,#d97706,#fbbf24);}
+.btn-r{background:linear-gradient(135deg,#ef4444,#fbbf24);}
+
+/* form inputs */
+.finput{width:100%;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;padding:13px 18px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:.92rem;outline:none;transition:border-color .3s;}
+.finput:focus{border-color:var(--accent2);}
+.finput::placeholder{color:var(--muted);}
+textarea.finput{resize:vertical;min-height:100px;}
+
+/* ── GRATITUDE JAR ── */
+.jar-wrap{position:relative;width:130px;height:170px;margin:0 auto 24px;}
+.jar-body{position:absolute;bottom:0;width:130px;height:140px;border:2.5px solid rgba(6,182,212,.5);border-top:none;border-radius:0 0 45px 45px;overflow:hidden;background:rgba(6,182,212,.04);}
+.jar-fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,rgba(6,182,212,.35),rgba(167,139,250,.2));border-radius:0 0 43px 43px;transition:height .6s;height:0;}
+.jar-lid{position:absolute;top:0;left:10px;width:110px;height:26px;border:2.5px solid rgba(6,182,212,.5);border-radius:9px 9px 0 0;}
+.grat-input{width:100%;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;padding:14px 18px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:.92rem;resize:none;outline:none;transition:border-color .3s;}
+.grat-input:focus{border-color:var(--accent2);}
+.grat-list{margin-top:18px;display:flex;flex-direction:column;gap:9px;max-height:200px;overflow-y:auto;}
+.grat-item{display:flex;align-items:center;gap:10px;background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.18);border-radius:13px;padding:12px 16px;animation:iIn .3s forwards;}
+@keyframes iIn{from{opacity:0;transform:translateX(-18px);}to{opacity:1;transform:translateX(0);}}
+.grat-item span{flex:1;font-size:.9rem;}
+.grat-item button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.95rem;}
+
+/* ── STARMAP ── */
+#swCanvas{width:100%;height:320px;border-radius:18px;display:block;cursor:crosshair;}
+.wish-colors{display:flex;gap:9px;margin-bottom:12px;align-items:center;flex-wrap:wrap;}
+.wc{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:transform .2s,border-color .2s;flex-shrink:0;}
+.wc.active{border-color:#fff;transform:scale(1.18);}
+.ctags{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;}
+.ctag{padding:5px 13px;border-radius:50px;background:rgba(124,58,237,.13);border:1px solid rgba(124,58,237,.28);color:#a78bfa;font-size:.78rem;cursor:default;}
+
+/* ── TIME CAPSULE ── */
+.cap-form{display:flex;flex-direction:column;gap:13px;}
+.cap-sealed{text-align:center;padding:26px;}
+.seal-icon{font-size:4.5rem;display:block;animation:sealPop .5s cubic-bezier(.36,.07,.19,.97);}
+@keyframes sealPop{0%{transform:scale(0);}70%{transform:scale(1.18);}100%{transform:scale(1);}}
+
+/* ── SOUNDSCAPE ── */
+.emo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:20px;}
+.emo-tile{border-radius:16px;padding:18px 10px;text-align:center;cursor:pointer;border:2px solid transparent;transition:all .25s;position:relative;overflow:hidden;}
+.emo-tile.active{border-color:rgba(255,255,255,.5);transform:scale(1.05);}
+.emo-emoji{font-size:2rem;display:block;margin-bottom:6px;}
+.emo-name{font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.svis{height:70px;display:flex;align-items:flex-end;gap:3px;justify-content:center;margin:18px 0;}
+.sbar{width:7px;border-radius:3px 3px 0 0;background:linear-gradient(0deg,var(--accent),var(--accent2));min-height:4px;transition:height .08s;}
+
+/* ── RIPPLE MAP ── */
+.world-map{position:relative;border-radius:18px;overflow:hidden;height:280px;background:radial-gradient(ellipse at center,#0d1b3e 0%,#030010 100%);margin-bottom:18px;cursor:crosshair;}
+.map-globe{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9rem;opacity:.12;animation:gSpin 35s linear infinite;user-select:none;}
+@keyframes gSpin{to{transform:rotate(360deg);}}
+.rp{position:absolute;}
+.rc{width:10px;height:10px;border-radius:50%;position:absolute;transform:translate(-50%,-50%);}
+.rw{width:10px;height:10px;border-radius:50%;border:2px solid;position:absolute;transform:translate(-50%,-50%);animation:rOut 2s ease-out infinite;}
+@keyframes rOut{0%{width:10px;height:10px;opacity:1;}100%{width:55px;height:55px;opacity:0;}}
+.klog{display:flex;flex-direction:column;gap:9px;max-height:160px;overflow-y:auto;}
+.klog-item{display:flex;align-items:center;gap:10px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.14);border-radius:11px;padding:11px 14px;font-size:.86rem;}
+.klog-dot{width:7px;height:7px;border-radius:50%;background:#34d399;flex-shrink:0;}
+
+/* ── BREATH OF FIRE ── */
+.fire-scene{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:24px;}
+.fire-ring-wrap{position:relative;width:240px;height:240px;display:flex;align-items:center;justify-content:center;}
+.fire-ring{position:absolute;border-radius:50%;border:2.5px solid;opacity:.4;animation:fRing 2s ease-out infinite;}
+.fr1{width:170px;height:170px;border-color:#fbbf24;animation-delay:0s;}
+.fr2{width:200px;height:200px;border-color:#f97316;animation-delay:.35s;}
+.fr3{width:235px;height:235px;border-color:#ef4444;animation-delay:.7s;}
+@keyframes fRing{0%{transform:scale(.8);opacity:.6;}100%{transform:scale(1.25);opacity:0;}}
+.fire-orb{width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,#fbbf24,#f97316,#dc2626);display:flex;align-items:center;justify-content:center;font-size:2.8rem;box-shadow:0 0 40px rgba(251,191,36,.35);transition:transform .2s;}
+.fire-stat{font-family:'Syne',sans-serif;font-size:3.2rem;font-weight:800;color:#fbbf24;text-align:center;}
+.fire-lbl{color:var(--muted);text-align:center;font-size:.92rem;}
+.fire-info{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:14px;padding:14px 18px;font-size:.83rem;color:var(--muted);line-height:1.7;margin-bottom:22px;}
+
+/* confetti */
+.cfp{position:fixed;top:-20px;pointer-events:none;z-index:9999;border-radius:3px;animation:cfFall linear forwards;}
+@keyframes cfFall{0%{transform:translateY(0) rotate(0);}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:rgba(124,58,237,.35);border-radius:3px;}
+
+@media(max-width:640px){
+  .hero{padding:48px 20px 24px;}
+  .challenges-section{padding:10px 18px 60px;}
+  .glass{padding:22px 16px;}
+  nav{padding:13px 18px;}
+  .emo-grid{grid-template-columns:repeat(2,1fr);}
+  .act-wrap{padding:28px 14px 60px;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="starCanvas"></canvas>
+<div class="nebula n1"></div>
+<div class="nebula n2"></div>
+<div class="nebula n3"></div>
+
+<!-- ══ MAIN ══ -->
+<div class="page active" id="page-main">
+  <nav>
+    <div class="nav-logo">✦ Reflectra</div>
+    <div style="font-size:.8rem;color:var(--muted);">Cosmic Ripple Challenges</div>
+  </nav>
+  <div class="hero">
+    <div class="hero-tag">🚀 Launch a positivity chain into the universe</div>
+    <h1 class="hero-title">Cosmic<br/><span class="hero-grad">Ripple</span><br/>Challenges</h1>
+    <p class="hero-desc">Launch a 24hr positivity chain into the universe.<br/><strong>Your ripples shape the cosmos.</strong></p>
+  </div>
+  <div class="challenges-section">
+    <div class="section-label">🌌 Choose your challenge</div>
+    <div class="grid">
+
+      <div class="ch-card" style="--cg:rgba(6,182,212,.18);animation-delay:.04s" onclick="goto('gratitude')">
+        <span class="card-badge b-new">NEW</span>
+        <div class="card-icon" style="background:rgba(6,182,212,.12);">🫙</div>
+        <div class="card-title">Gratitude Jar</div>
+        <div class="card-desc">Drop moments of gratitude into a glowing cosmic jar. Watch it fill with light.</div>
+        <div class="card-meta">
+          <span class="card-time">⏱ 5 min</span>
+          <button class="card-cta" style="background:linear-gradient(135deg,#0891b2,#06b6d4);" onclick="event.stopPropagation();goto('gratitude')">Open →</button>
+        </div>
+      </div>
+
+      <div class="ch-card" style="--cg:rgba(124,58,237,.18);animation-delay:.09s" onclick="goto('starmap')">
+        <span class="card-badge b-deep">DEEP</span>
+        <div class="card-icon" style="background:rgba(124,58,237,.12);">⭐</div>
+        <div class="card-title">Starmap Wishes</div>
+        <div class="card-desc">Paint your wishes onto the night sky as glowing constellations.</div>
+        <div class="card-meta">
+          <span class="card-time">⏱ 10 min</span>
+          <button class="card-cta" style="background:linear-gradient(135deg,#7c3aed,#a855f7);" onclick="event.stopPropagation();goto('starmap')">Draw →</button>
+        </div>
+      </div>
+
+      <div class="ch-card" style="--cg:rgba(244,114,182,.18);animation-delay:.14s" onclick="goto('capsule')">
+        <span class="card-badge b-hot">HOT</span>
+        <div class="card-icon" style="background:rgba(244,114,182,.12);">🚀</div>
+        <div class="card-title">Time Capsule</div>
+        <div class="card-desc">Write a letter to your future self — sealed, stored, returned in 30 days.</div>
+        <div class="card-meta">
+          <span class="card-time">⏱ 8 min</span>
+          <button class="card-cta" style="background:linear-gradient(135deg,#db2777,#f472b6);" onclick="event.stopPropagation();goto('capsule')">Write →</button>
+        </div>
+      </div>
+
+      <div class="ch-card" style="--cg:rgba(52,211,153,.18);animation-delay:.19s" onclick="goto('soundscape')">
+        <span class="card-badge b-new">NEW</span>
+        <div class="card-icon" style="background:rgba(52,211,153,.12);">🎵</div>
+        <div class="card-title">Emotion Soundscape</div>
+        <div class="card-desc">Pick your emotion — a personalized healing frequency washes over you.</div>
+        <div class="card-meta">
+          <span class="card-time">⏱ 3 min</span>
+          <button class="card-cta" style="background:linear-gradient(135deg,#059669,#34d399);" onclick="event.stopPropagation();goto('soundscape')">Listen →</button>
+        </div>
+      </div>
+
+      <div class="ch-card" style="--cg:rgba(251,191,36,.14);animation-delay:.24s" onclick="goto('ripplemap')">
+        <span class="card-badge b-hot">HOT</span>
+        <div class="card-icon" style="background:rgba(251,191,36,.1);">🌍</div>
+        <div class="card-title">Kindness Ripple Map</div>
+        <div class="card-desc">Log a kind act and watch your ripple spread across a live world map.</div>
+        <div class="card-meta">
+          <span class="card-time">⏱ 2 min</span>
+          <button class="card-cta" style="background:linear-gradient(135deg,#d97706,#fbbf24);" onclick="event.stopPropagation();goto('ripplemap')">Ripple →</button>
+        </div>
+      </div>
+
+      <div class="ch-card" style="--cg:rgba(239,68,68,.18);animation-delay:.29s" onclick="goto('breathfire')">
+        <span class="card-badge b-deep">DEEP</span>
+        <div class="card-icon" style="background:rgba(239,68,68,.1);">🔥</div>
+        <div class="card-title">Breath of Fire</div>
+        <div class="card-desc">Ancient energizing breath pattern. Ignite your inner fire in 3 minutes flat.</div>
+        <div class="card-meta">
+          <span class="card-time">⏱ 3 min</span>
+          <button class="card-cta" style="background:linear-gradient(135deg,#ef4444,#fbbf24);" onclick="event.stopPropagation();goto('breathfire')">Ignite →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ GRATITUDE JAR ══ -->
+<div class="page" id="page-gratitude">
+  <nav><div class="nav-logo">✦ Reflectra</div><button class="nav-back" onclick="goBack()">← Back</button></nav>
+  <div class="act-wrap">
+    <div class="act-hero">
+      <span class="act-icon-big">🫙</span>
+      <div class="act-title">Gratitude Jar</div>
+      <div class="act-sub">Every moment of thanks is a drop of light</div>
+    </div>
+    <div class="glass">
+      <div class="jar-wrap">
+        <div class="jar-lid"></div>
+        <div class="jar-body"><div class="jar-fill" id="jarFill"></div></div>
+      </div>
+      <p style="text-align:center;color:var(--muted);font-size:.86rem;margin-bottom:18px;" id="jarCount">0 drops of gratitude</p>
+      <textarea class="grat-input" id="gratInput" rows="3" placeholder="I'm grateful for…"></textarea>
+      <br/><br/>
+      <div style="text-align:center;"><button class="big-btn btn-c" onclick="addGratitude()">✦ Drop it in</button></div>
+      <div class="grat-list" id="gratList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STARMAP WISHES ══ -->
+<div class="page" id="page-starmap">
+  <nav><div class="nav-logo">✦ Reflectra</div><button class="nav-back" onclick="goBack()">← Back</button></nav>
+  <div class="act-wrap">
+    <div class="act-hero">
+      <span class="act-icon-big">⭐</span>
+      <div class="act-title">Starmap Wishes</div>
+      <div class="act-sub">Click to place a star. Connect the dots of your desires.</div>
+    </div>
+    <div class="glass">
+      <div class="wish-colors">
+        <div class="wc active" style="background:#c084fc;" data-col="#c084fc" onclick="setWC(this)"></div>
+        <div class="wc" style="background:#06b6d4;" data-col="#06b6d4" onclick="setWC(this)"></div>
+        <div class="wc" style="background:#f472b6;" data-col="#f472b6" onclick="setWC(this)"></div>
+        <div class="wc" style="background:#fbbf24;" data-col="#fbbf24" onclick="setWC(this)"></div>
+        <div class="wc" style="background:#34d399;" data-col="#34d399" onclick="setWC(this)"></div>
+        <div class="wc" style="background:#f87171;" data-col="#f87171" onclick="setWC(this)"></div>
+        <div style="flex:1;"></div>
+        <button onclick="clearSW()" style="padding:6px 14px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.8rem;">🗑 Clear</button>
+        <button onclick="saveSW()" style="padding:6px 14px;border-radius:50px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.8rem;">💾 Save</button>
+      </div>
+      <canvas id="swCanvas"></canvas>
+      <div class="ctags" id="ctags"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TIME CAPSULE ══ -->
+<div class="page" id="page-capsule">
+  <nav><div class="nav-logo">✦ Reflectra</div><button class="nav-back" onclick="goBack()">← Back</button></nav>
+  <div class="act-wrap">
+    <div class="act-hero">
+      <span class="act-icon-big">🚀</span>
+      <div class="act-title">Time Capsule</div>
+      <div class="act-sub">A letter to the person you'll be in 30 days</div>
+    </div>
+    <div class="glass" id="capForm">
+      <div class="cap-form">
+        <input class="finput" id="capName" placeholder="Your name (or a secret alias 🌙)"/>
+        <input class="finput" id="capDream" placeholder="One dream you're chasing right now…"/>
+        <textarea class="finput" id="capLetter" placeholder="Dear future me, right now I feel…" rows="5"></textarea>
+        <input class="finput" id="capWish" placeholder="One wish for yourself in 30 days…"/>
+      </div>
+      <br/>
+      <div style="text-align:center;"><button class="big-btn btn-p" onclick="sealCap()">🔒 Seal & Launch</button></div>
+    </div>
+    <div class="glass" id="capSealed" style="display:none;">
+      <div class="cap-sealed">
+        <span class="seal-icon">🔒</span>
+        <div class="act-title" style="font-size:1.7rem;margin-top:14px;">Capsule Launched!</div>
+        <p style="color:var(--muted);margin-top:10px;line-height:1.7;font-size:.92rem;">Your message is drifting through the cosmos. The universe holds your words safely. 🌌</p>
+        <div style="background:rgba(244,114,182,.09);border:1px solid rgba(244,114,182,.27);border-radius:14px;padding:18px;text-align:left;margin-top:18px;">
+          <div style="color:#f472b6;font-size:.76rem;margin-bottom:8px;letter-spacing:1px;">SEALED MESSAGE</div>
+          <div id="capSummary" style="font-size:.9rem;color:var(--muted);line-height:1.7;"></div>
+        </div>
+        <br/>
+        <button class="big-btn btn-p" onclick="newCap()">✦ Write Another</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EMOTION SOUNDSCAPE ══ -->
+<div class="page" id="page-soundscape">
+  <nav><div class="nav-logo">✦ Reflectra</div><button class="nav-back" onclick="goBack()">← Back</button></nav>
+  <div class="act-wrap">
+    <div class="act-hero">
+      <span class="act-icon-big">🎵</span>
+      <div class="act-title">Emotion Soundscape</div>
+      <div class="act-sub">Your emotion, your frequency, your healing</div>
+    </div>
+    <div class="glass">
+      <p style="color:var(--muted);margin-bottom:18px;font-size:.9rem;">How are you feeling right now?</p>
+      <div class="emo-grid">
+        <div class="emo-tile" style="background:rgba(124,58,237,.13);" data-emo="calm" onclick="pickEmo(this)"><span class="emo-emoji">😌</span><span class="emo-name" style="color:#a78bfa;">Calm</span></div>
+        <div class="emo-tile" style="background:rgba(251,191,36,.1);" data-emo="anxious" onclick="pickEmo(this)"><span class="emo-emoji">😰</span><span class="emo-name" style="color:#fbbf24;">Anxious</span></div>
+        <div class="emo-tile" style="background:rgba(52,211,153,.1);" data-emo="happy" onclick="pickEmo(this)"><span class="emo-emoji">😊</span><span class="emo-name" style="color:#34d399;">Happy</span></div>
+        <div class="emo-tile" style="background:rgba(6,182,212,.1);" data-emo="sad" onclick="pickEmo(this)"><span class="emo-emoji">😢</span><span class="emo-name" style="color:#06b6d4;">Sad</span></div>
+        <div class="emo-tile" style="background:rgba(239,68,68,.1);" data-emo="angry" onclick="pickEmo(this)"><span class="emo-emoji">😤</span><span class="emo-name" style="color:#ef4444;">Angry</span></div>
+        <div class="emo-tile" style="background:rgba(244,114,182,.1);" data-emo="grateful" onclick="pickEmo(this)"><span class="emo-emoji">🥹</span><span class="emo-name" style="color:#f472b6;">Grateful</span></div>
+      </div>
+      <div id="emoPanel" style="display:none;background:rgba(255,255,255,.04);border-radius:16px;padding:20px;margin-top:14px;">
+        <div id="emoTitle" style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:6px;"></div>
+        <div id="emoText" style="color:var(--muted);font-size:.85rem;line-height:1.65;"></div>
+        <div class="svis" id="svis"></div>
+        <div style="text-align:center;"><button class="big-btn btn-g" id="sndBtn" onclick="toggleSnd()">▶ Play Soundscape</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RIPPLE MAP ══ -->
+<div class="page" id="page-ripplemap">
+  <nav><div class="nav-logo">✦ Reflectra</div><button class="nav-back" onclick="goBack()">← Back</button></nav>
+  <div class="act-wrap">
+    <div class="act-hero">
+      <span class="act-icon-big">🌍</span>
+      <div class="act-title">Kindness Ripple Map</div>
+      <div class="act-sub">Every act of kindness ripples across the world</div>
+    </div>
+    <div class="glass">
+      <div class="world-map" id="worldMap" onclick="mapClick(event)">
+        <div class="map-globe">🌍</div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.05);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;pointer-events:none;">Click to plant a kindness ripple</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+        <input class="finput" id="kAct" placeholder="What kind thing did you do?" style="flex:1;min-width:180px;"/>
+        <button class="big-btn btn-g" style="padding:11px 22px;" onclick="logKind()">+ Log It</button>
+      </div>
+      <div class="klog" id="klog">
+        <div class="klog-item"><div class="klog-dot"></div><span>Someone shared their lunch 🌏</span></div>
+        <div class="klog-item"><div class="klog-dot"></div><span>A stranger held the door open 💚</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BREATH OF FIRE ══ -->
+<div class="page" id="page-breathfire">
+  <nav><div class="nav-logo">✦ Reflectra</div><button class="nav-back" onclick="goBack()">← Back</button></nav>
+  <div class="act-wrap">
+    <div class="act-hero">
+      <span class="act-icon-big">🔥</span>
+      <div class="act-title">Breath of Fire</div>
+      <div class="act-sub">Ancient rhythmic breathing to ignite your energy</div>
+    </div>
+    <div class="glass">
+      <div class="fire-scene">
+        <div class="fire-ring-wrap">
+          <div class="fire-ring fr1"></div>
+          <div class="fire-ring fr2"></div>
+          <div class="fire-ring fr3"></div>
+          <div class="fire-orb" id="fireOrb">🔥</div>
+        </div>
+        <div class="fire-stat" id="fireCnt">0</div>
+        <div class="fire-lbl" id="fireLbl">Press Ignite to begin</div>
+      </div>
+      <div class="fire-info">
+        <strong style="color:#fbbf24;">How to do it:</strong> Short, sharp exhales through the nose — the inhale happens naturally. Start slow, build up. If dizzy, pause and breathe normally.<br/>
+        <strong style="color:#fbbf24;">Goal:</strong> 3 rounds × 30 breaths.
+      </div>
+      <div style="text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="big-btn btn-r" id="fireBtn" onclick="startFire()">🔥 Ignite</button>
+        <button class="big-btn" style="background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--muted);" onclick="stopFire()">■ Stop</button>
+      </div>
+      <div style="text-align:center;margin-top:18px;font-size:.84rem;color:var(--muted);">Round <strong id="fireRnd" style="color:#fbbf24;">0</strong> / 3 &nbsp;·&nbsp; This round: <strong id="fireRndB" style="color:#fbbf24;">0</strong></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── STARS ── */
+const sc=document.getElementById('starCanvas');
+const sx=sc.getContext('2d');
+let stars=[];
+function resizeSC(){sc.width=innerWidth;sc.height=innerHeight;buildS();}
+function buildS(){stars=[];for(let i=0;i<230;i++)stars.push({x:Math.random()*sc.width,y:Math.random()*sc.height,r:Math.random()*1.4+.3,a:Math.random(),s:.004+Math.random()*.01,d:Math.random()>.5?1:-1});}
+function animS(){sx.clearRect(0,0,sc.width,sc.height);stars.forEach(s=>{s.a+=s.s*s.d;if(s.a>=1||s.a<=0)s.d*=-1;sx.beginPath();sx.arc(s.x,s.y,s.r,0,Math.PI*2);sx.fillStyle=`rgba(255,255,255,${s.a})`;sx.fill();});requestAnimationFrame(animS);}
+window.addEventListener('resize',resizeSC);resizeSC();animS();
+
+/* ── NAV ── */
+function goto(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  scrollTo(0,0);
+  if(id==='starmap')initSW();
+  if(id==='soundscape')initSVis();
+  if(id==='gratitude'){gratItems=[];renderGrat();}
+}
+function goBack(){stopFire();stopSnd();goto('main');}
+
+/* ── CONFETTI ── */
+function confetti(){
+  const cs=['#c084fc','#06b6d4','#f472b6','#fbbf24','#34d399','#ef4444'];
+  for(let i=0;i<48;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');c.className='cfp';
+      c.style.cssText=`left:${Math.random()*100}vw;width:${6+Math.random()*10}px;height:${6+Math.random()*10}px;background:${cs[Math.floor(Math.random()*cs.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;border-radius:${Math.random()>.5?'50%':'3px'};`;
+      document.body.appendChild(c);setTimeout(()=>c.remove(),3800);
+    },i*28);
+  }
+}
+
+/* ── GRATITUDE ── */
+let gratItems=[];
+function addGratitude(){
+  const i=document.getElementById('gratInput');
+  const v=i.value.trim();if(!v)return;
+  gratItems.push(v);i.value='';renderGrat();confetti();
+}
+function renderGrat(){
+  const l=document.getElementById('gratList');l.innerHTML='';
+  document.getElementById('jarCount').textContent=gratItems.length+' drop'+(gratItems.length!==1?'s':'')+' of gratitude';
+  document.getElementById('jarFill').style.height=Math.min(gratItems.length*9,94)+'%';
+  gratItems.slice().reverse().forEach((it,i)=>{
+    const d=document.createElement('div');d.className='grat-item';
+    d.innerHTML=`<span>✨ ${it}</span><button onclick="delGrat(${gratItems.length-1-i})">✕</button>`;
+    l.appendChild(d);
+  });
+}
+function delGrat(i){gratItems.splice(i,1);renderGrat();}
+
+/* ── STARMAP ── */
+let swColor='#c084fc',swStars=[],swLines=[],swLast=null,swCtx;
+const wNames=['Love','Health','Courage','Peace','Joy','Dreams','Wisdom','Freedom','Hope','Power'];
+function initSW(){
+  const c=document.getElementById('swCanvas');
+  c.width=c.offsetWidth;c.height=320;
+  swCtx=c.getContext('2d');drawSW();
+  c.onclick=e=>{
+    const r=c.getBoundingClientRect();
+    const x=(e.clientX-r.left)*(c.width/r.width);
+    const y=(e.clientY-r.top)*(c.height/r.height);
+    const nm=wNames[Math.floor(Math.random()*wNames.length)];
+    const star={x,y,col:swColor,name:nm};
+    if(swLast)swLines.push({a:swLast,b:star,col:swColor});
+    swStars.push(star);swLast=star;drawSW();
+    const t=document.createElement('div');t.className='ctag';t.textContent='✦ '+nm;
+    document.getElementById('ctags').appendChild(t);
+  };
+}
+function drawSW(){
+  const c=document.getElementById('swCanvas');
+  swCtx.clearRect(0,0,c.width,c.height);
+  const bg=swCtx.createLinearGradient(0,0,0,c.height);
+  bg.addColorStop(0,'#030010');bg.addColorStop(1,'#0d0a2e');
+  swCtx.fillStyle=bg;swCtx.fillRect(0,0,c.width,c.height);
+  // ambient tiny stars
+  for(let i=0;i<60;i++){const sx=Math.sin(i*137.5)*c.width*.5+c.width*.5;const sy=Math.cos(i*97.3)*c.height*.5+c.height*.5;swCtx.beginPath();swCtx.arc(sx,sy,.8,0,Math.PI*2);swCtx.fillStyle='rgba(255,255,255,.25)';swCtx.fill();}
+  swLines.forEach(l=>{swCtx.beginPath();swCtx.moveTo(l.a.x,l.a.y);swCtx.lineTo(l.b.x,l.b.y);swCtx.strokeStyle=l.col+'44';swCtx.lineWidth=1.5;swCtx.stroke();});
+  swStars.forEach(s=>{
+    const g=swCtx.createRadialGradient(s.x,s.y,0,s.x,s.y,18);
+    g.addColorStop(0,s.col+'bb');g.addColorStop(1,'transparent');
+    swCtx.beginPath();swCtx.arc(s.x,s.y,18,0,Math.PI*2);swCtx.fillStyle=g;swCtx.fill();
+    swCtx.beginPath();swCtx.arc(s.x,s.y,5,0,Math.PI*2);swCtx.fillStyle=s.col;swCtx.fill();
+    swCtx.fillStyle='rgba(255,255,255,.65)';swCtx.font='11px Space Grotesk';swCtx.fillText(s.name,s.x+8,s.y-8);
+  });
+}
+function setWC(el){document.querySelectorAll('.wc').forEach(d=>d.classList.remove('active'));el.classList.add('active');swColor=el.dataset.col;swLast=null;}
+function clearSW(){swStars=[];swLines=[];swLast=null;document.getElementById('ctags').innerHTML='';drawSW();}
+function saveSW(){const l=document.createElement('a');l.download='starmap.png';l.href=document.getElementById('swCanvas').toDataURL();l.click();}
+
+/* ── TIME CAPSULE ── */
+function sealCap(){
+  const name=document.getElementById('capName').value.trim();
+  const dream=document.getElementById('capDream').value.trim();
+  const letter=document.getElementById('capLetter').value.trim();
+  const wish=document.getElementById('capWish').value.trim();
+  if(!letter){alert('Write at least a few words to your future self 💫');return;}
+  const d=new Date();d.setDate(d.getDate()+30);
+  document.getElementById('capForm').style.display='none';
+  document.getElementById('capSealed').style.display='block';
+  document.getElementById('capSummary').innerHTML=`<b style="color:#f472b6;">${name||'Cosmic Traveller'}</b>'s capsule<br/>Dream: "${dream||'—'}"<br/>Open after: <b style="color:#c084fc;">${d.toDateString()}</b><br/>Wish: "${wish||'—'}"`;
+  confetti();
+}
+function newCap(){
+  ['capName','capDream','capLetter','capWish'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('capForm').style.display='block';
+  document.getElementById('capSealed').style.display='none';
+}
+
+/* ── SOUNDSCAPE ── */
+let audCtx=null,sndNodes=[],sndOn=false,sndAF=null;
+let sbars=[];
+const eData={
+  calm:{title:'🌊 Deep Calm (432 Hz)',text:'Slow 432Hz tone woven with gentle pulses. Let your shoulders drop and your jaw unclench.',freq:[432,216],col:'#a78bfa'},
+  anxious:{title:'🌬️ Anxiety Release (528 Hz)',text:'528Hz — the "miracle tone" known to reduce cortisol. Slows the nervous system gently.',freq:[528,264],col:'#fbbf24'},
+  happy:{title:'☀️ Joy Amplifier (639 Hz)',text:'639Hz for heart-opening resonance. Enhances warmth, connection, and gratitude.',freq:[639,319.5],col:'#34d399'},
+  sad:{title:'💙 Gentle Comfort (741 Hz)',text:'741Hz — cleansing and soothing. Like a warm blanket of sound. You are allowed to feel.',freq:[741,370.5],col:'#06b6d4'},
+  angry:{title:'🌋 Release (396 Hz)',text:'396Hz — liberating guilt and fear, grounding you and releasing stored tension at the root.',freq:[396,198],col:'#ef4444'},
+  grateful:{title:'💜 Heart Resonance (852 Hz)',text:'852Hz — awakening intuition and returning to spiritual order. The frequency of pure gratitude.',freq:[852,426],col:'#f472b6'},
+};
+function initSVis(){
+  const v=document.getElementById('svis');v.innerHTML='';sbars=[];
+  for(let i=0;i<26;i++){const b=document.createElement('div');b.className='sbar';b.style.height='4px';v.appendChild(b);sbars.push(b);}
+}
+function pickEmo(el){
+  document.querySelectorAll('.emo-tile').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const d=eData[el.dataset.emo];
+  document.getElementById('emoPanel').style.display='block';
+  document.getElementById('emoTitle').textContent=d.title;
+  document.getElementById('emoTitle').style.color=d.col;
+  document.getElementById('emoText').textContent=d.text;
+  stopSnd();
+}
+function toggleSnd(){
+  if(sndOn){stopSnd();return;}
+  const el=document.querySelector('.emo-tile.active');if(!el)return;
+  const d=eData[el.dataset.emo];
+  audCtx=new(window.AudioContext||window.webkitAudioContext)();
+  sndNodes=[];
+  d.freq.forEach((f,i)=>{
+    const o=audCtx.createOscillator(),g=audCtx.createGain();
+    o.type=i===0?'sine':'triangle';
+    o.frequency.value=f;
+    g.gain.value=i===0?.11:.055;
+    o.connect(g);g.connect(audCtx.destination);o.start();
+    sndNodes.push({o,g});
+  });
+  sndOn=true;
+  document.getElementById('sndBtn').textContent='■ Stop Soundscape';
+  animBars();
+}
+function animBars(){sbars.forEach(b=>b.style.height=(8+Math.random()*58)+'px');sndAF=requestAnimationFrame(()=>setTimeout(animBars,75));}
+function stopSnd(){
+  if(audCtx){sndNodes.forEach(n=>n.o.stop());audCtx.close();audCtx=null;}
+  sndOn=false;sndNodes=[];cancelAnimationFrame(sndAF);
+  sbars.forEach(b=>b.style.height='4px');
+  const b=document.getElementById('sndBtn');if(b)b.textContent='▶ Play Soundscape';
+}
+
+/* ── RIPPLE MAP ── */
+const rCols=['#34d399','#06b6d4','#c084fc','#f472b6','#fbbf24','#f87171'];
+function mapClick(e){
+  const m=document.getElementById('worldMap');
+  const r=m.getBoundingClientRect();
+  addRipple(e.clientX-r.left,e.clientY-r.top);
+}
+function addRipple(x,y){
+  const m=document.getElementById('worldMap');
+  const col=rCols[Math.floor(Math.random()*rCols.length)];
+  const pt=document.createElement('div');pt.className='rp';pt.style.cssText=`left:${x}px;top:${y}px;`;
+  const core=document.createElement('div');core.className='rc';core.style.background=col;
+  const wave=document.createElement('div');wave.className='rw';wave.style.borderColor=col;
+  pt.appendChild(core);pt.appendChild(wave);m.appendChild(pt);
+}
+function logKind(){
+  const inp=document.getElementById('kAct');
+  const v=inp.value.trim();if(!v)return;
+  const log=document.getElementById('klog');
+  const d=document.createElement('div');d.className='klog-item';
+  d.innerHTML=`<div class="klog-dot"></div><span>${v} 💚</span>`;
+  log.prepend(d);inp.value='';confetti();
+  const m=document.getElementById('worldMap');
+  const r=m.getBoundingClientRect();
+  addRipple(Math.random()*r.width,Math.random()*r.height);
+}
+
+/* ── BREATH OF FIRE ── */
+let fCnt=0,fRnd=0,fRndB=0,fInt=null;
+function startFire(){
+  stopFire();fCnt=0;fRnd=1;fRndB=0;updFire();
+  document.getElementById('fireBtn').textContent='🔥 Burning…';
+  document.getElementById('fireLbl').textContent='Exhale sharply through nose!';
+  runFireLoop();
+}
+function runFireLoop(){
+  fInt=setInterval(()=>{
+    fCnt++;fRndB++;updFire();
+    const orb=document.getElementById('fireOrb');
+    orb.style.transform='scale(1.25)';
+    setTimeout(()=>{if(orb)orb.style.transform='scale(1)';},180);
+    if(fRndB>=30){
+      fRndB=0;
+      if(fRnd>=3){stopFire();document.getElementById('fireLbl').textContent='🌟 Complete! You are on fire!';confetti();return;}
+      fRnd++;clearInterval(fInt);
+      document.getElementById('fireLbl').textContent='Rest… round '+fRnd+' starts in 5s';
+      setTimeout(()=>{document.getElementById('fireLbl').textContent='Exhale sharply through nose!';runFireLoop();},5000);
+    }
+  },400);
+}
+function updFire(){
+  document.getElementById('fireCnt').textContent=fCnt;
+  document.getElementById('fireRnd').textContent=fRnd||0;
+  document.getElementById('fireRndB').textContent=fRndB;
+}
+function stopFire(){
+  clearInterval(fInt);fInt=null;
+  const b=document.getElementById('fireBtn');if(b)b.textContent='🔥 Ignite';
+  const l=document.getElementById('fireLbl');if(l)l.textContent='Press Ignite to begin';
+}
+</script>
+</body>
+</html>
